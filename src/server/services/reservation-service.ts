@@ -4,6 +4,37 @@ import { AppError } from "@/lib/errors";
 import { adminDb } from "@/lib/firebase/admin";
 import type { Reservation } from "@/types/domain";
 
+type ReservationOwnerField = "customerUid" | "businessId";
+
+function isMissingIndexError(error: unknown) {
+  const code = (error as { code?: unknown } | null)?.code;
+  return code === 9 || code === "failed-precondition";
+}
+
+export async function listReservationsBy(ownerField: ReservationOwnerField, ownerId: string): Promise<Reservation[]> {
+  const collection = adminDb().collection("reservations");
+
+  try {
+    const snapshot = await collection
+      .where(ownerField, "==", ownerId)
+      .orderBy("startAt", "desc")
+      .limit(100)
+      .get();
+    return snapshot.docs.map((item) => serializeReservation(item.id, item.data()));
+  } catch (error) {
+    if (!isMissingIndexError(error)) throw error;
+
+    console.warn("[reservations] Composite index unavailable; using an in-memory ordering fallback", {
+      ownerField,
+    });
+    const snapshot = await collection.where(ownerField, "==", ownerId).get();
+    return snapshot.docs
+      .map((item) => serializeReservation(item.id, item.data()))
+      .sort((left, right) => new Date(right.startAt).getTime() - new Date(left.startAt).getTime())
+      .slice(0, 100);
+  }
+}
+
 export class ReservationService {
   async reserveSlot(slotId: string, customerUid: string): Promise<{ id: string }> {
     const db = adminDb();

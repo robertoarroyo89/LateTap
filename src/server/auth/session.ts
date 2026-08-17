@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import { cache } from "react";
 
 import { appConfig } from "@/config/app";
 import { AppError } from "@/lib/errors";
@@ -37,6 +38,14 @@ export async function authenticateRequest(request?: Request): Promise<Authentica
     throw new AppError("UNAUTHORIZED", "Session expired", 401);
   }
 }
+
+export const getCurrentUser = cache(async (): Promise<AuthenticatedUser | null> => {
+  try {
+    return await authenticateRequest();
+  } catch {
+    return null;
+  }
+});
 
 export async function requireAdmin(request?: Request) {
   const user = await authenticateRequest(request);

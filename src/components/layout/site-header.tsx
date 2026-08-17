@@ -3,9 +3,11 @@ import { CalendarDays, ChevronDown, MapPin, Search, Sparkles } from "lucide-reac
 
 import type { Locale } from "@/config/app";
 import type { Messages } from "@/messages";
+import { getCurrentUser } from "@/server/auth/session";
 
-export function SiteHeader({ locale, messages }: { locale: Locale; messages: Messages }) {
+export async function SiteHeader({ locale, messages }: { locale: Locale; messages: Messages }) {
   const alternate = locale === "es" ? "en" : "es";
+  const user = await getCurrentUser();
   return (
     <>
       <header className="site-header">
@@ -16,7 +18,9 @@ export function SiteHeader({ locale, messages }: { locale: Locale; messages: Mes
             <Link href={`/${locale}/explore`}>{messages.nav.explore}</Link>
             <Link href={`/${locale}/for-businesses`}>{messages.nav.forBusinesses}</Link>
             <Link className="language-button" href={`/${alternate}`} aria-label={messages.common.language}>{alternate.toUpperCase()}</Link>
-            <Link className="login-button" href={`/${locale}/login`}>{messages.nav.login}</Link>
+            <Link className="login-button" href={user ? `/${locale}/account/bookings` : `/${locale}/login`}>
+              {user ? messages.nav.bookings : messages.nav.login}
+            </Link>
           </nav>
         </div>
       </header>

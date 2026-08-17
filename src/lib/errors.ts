@@ -20,6 +20,7 @@ export class AppError extends Error {
 }
 
 export function errorResponse(error: unknown) {
+  if (!(error instanceof AppError)) console.error("[api] Unexpected server error", error);
   const known = error instanceof AppError ? error : new AppError("INTERNAL_ERROR", "Unexpected server error", 500);
   return Response.json({ error: { code: known.code, message: known.message } }, { status: known.status });
 }
