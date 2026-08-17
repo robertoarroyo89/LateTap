@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
 
 import { appConfig } from "@/config/app";
@@ -42,7 +43,8 @@ export async function authenticateRequest(request?: Request): Promise<Authentica
 export const getCurrentUser = cache(async (): Promise<AuthenticatedUser | null> => {
   try {
     return await authenticateRequest();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return null;
   }
 });
