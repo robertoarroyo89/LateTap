@@ -19,10 +19,6 @@ const contentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // Firebase Admin pulls in the CommonJS `jwks-rsa` package, which in turn
-  // loads the ESM-only `jose` package. Bundle/transpile that boundary so the
-  // Vercel runtime does not try to execute it as a native CommonJS require.
-  transpilePackages: ["jwks-rsa", "jose"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "firebasestorage.googleapis.com" },
