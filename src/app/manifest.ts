@@ -1,0 +1,2 @@
+import type { MetadataRoute } from "next";
+export default function manifest(): MetadataRoute.Manifest { return { name: "LateTap", short_name: "LateTap", description: "Last-minute appointments near you.", start_url: "/es", display: "standalone", background_color: "#fff8f3", theme_color: "#ff5a5f", orientation: "portrait-primary", icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }] }; }

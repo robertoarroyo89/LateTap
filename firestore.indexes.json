@@ -1,0 +1,54 @@
+{
+  "indexes": [
+    { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "cityKey", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "cityKey", "order": "ASCENDING" },
+      { "fieldPath": "categoryId", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "cityKey", "order": "ASCENDING" },
+      { "fieldPath": "geohash", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "businessId", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "DESCENDING" }
+    ]},
+    { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "businessId", "order": "ASCENDING" },
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "reservations", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "customerUid", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "DESCENDING" }
+    ]},
+    { "collectionGroup": "reservations", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "customerUid", "order": "ASCENDING" },
+      { "fieldPath": "status", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "reservations", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "businessId", "order": "ASCENDING" },
+      { "fieldPath": "startAt", "order": "DESCENDING" }
+    ]},
+    { "collectionGroup": "businesses", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ]},
+    { "collectionGroup": "businesses", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "ownerUid", "order": "ASCENDING" },
+      { "fieldPath": "status", "order": "ASCENDING" }
+    ]},
+    { "collectionGroup": "services", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "businessId", "order": "ASCENDING" },
+      { "fieldPath": "active", "order": "ASCENDING" }
+    ]}
+  ],
+  "fieldOverrides": []
+}

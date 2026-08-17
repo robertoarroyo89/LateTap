@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function ownsBusiness(businessId) {
+      return signedIn()
+        && firestore.get(/databases/(default)/documents/businesses/$(businessId)).data.ownerUid == request.auth.uid;
+    }
+    function validImage(maxBytes) {
+      return request.resource != null
+        && request.resource.size <= maxBytes
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    match /businesses/{businessId}/logo/{fileName} {
+      allow read: if firestore.get(/databases/(default)/documents/businesses/$(businessId)).data.status == 'approved';
+      allow create, update: if ownsBusiness(businessId) && validImage(2 * 1024 * 1024);
+      allow delete: if ownsBusiness(businessId);
+    }
+    match /businesses/{businessId}/cover/{fileName} {
+      allow read: if firestore.get(/databases/(default)/documents/businesses/$(businessId)).data.status == 'approved';
+      allow create, update: if ownsBusiness(businessId) && validImage(5 * 1024 * 1024);
+      allow delete: if ownsBusiness(businessId);
+    }
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}
