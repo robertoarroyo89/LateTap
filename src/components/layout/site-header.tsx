@@ -11,7 +11,7 @@ export function SiteHeader({ locale, messages }: { locale: Locale; messages: Mes
       <header className="site-header">
         <div className="shell header-inner">
           <Link className="wordmark" href={`/${locale}`} aria-label="LateTap, home">Late<span>Tap</span><i aria-hidden="true" /></Link>
-          <button className="location-button" type="button"><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Valencia<ChevronDown size={15} aria-hidden="true" /></button>
+          <button className="location-button" type="button"><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />{messages.common.nearby}<ChevronDown size={15} aria-hidden="true" /></button>
           <nav className="desktop-nav" aria-label="Primary navigation">
             <Link href={`/${locale}/explore`}>{messages.nav.explore}</Link>
             <Link href={`/${locale}/for-businesses`}>{messages.nav.forBusinesses}</Link>

@@ -22,7 +22,7 @@ export async function HomePage({ locale, messages }: { locale: Locale; messages:
             <div className="hero-actions"><Link className="primary-button" href={`/${locale}/explore`}>{messages.home.seeToday}<ArrowRight size={18} /></Link><Link className="secondary-button" href={`/${locale}/explore?location=current`}><LocateFixed size={18} />{messages.home.useLocation}</Link></div>
             <small>{messages.home.venuePayment}</small>
           </div>
-          <div className="hero-poster"><span>Something<br />just opened up.</span><strong>Tap<br />and book it.</strong><i>LateTap</i></div>
+          <div className="hero-poster"><span>{messages.home.posterOpenTop}<br />{messages.home.posterOpenBottom}</span><strong>{messages.home.posterActionTop}<br />{messages.home.posterActionBottom}</strong><i>LateTap</i></div>
         </div>
       </section>
       <section className="categories-section"><div className="shell"><div className="section-heading compact-heading"><div><p className="kicker">{messages.home.categoriesKicker}</p><h2>{messages.home.categoriesTitle}</h2></div></div><div className="category-scroller">{categories.map((category) => { const Icon = categoryIcons[category.id]; return <Link className="category-item" href={`/${locale}/explore?category=${category.id}`} key={category.id}><span><Icon size={22} /></span>{locale === "es" ? category.labelEs : category.labelEn}</Link>; })}</div></div></section>

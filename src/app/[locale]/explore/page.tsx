@@ -8,7 +8,7 @@ import { categories } from "@/config/categories";
 import { getMessages } from "@/messages";
 import { getSlotRepository } from "@/server/repositories";
 
-export const metadata: Metadata = { title: "Explore", description: "Live last-minute availability in Valencia." };
+export const metadata: Metadata = { title: "Explore", description: "Live last-minute availability near you." };
 
 export default async function ExplorePage({ params, searchParams }: PageProps<"/[locale]/explore">) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
@@ -22,7 +22,7 @@ export default async function ExplorePage({ params, searchParams }: PageProps<"/
   const result = await getSlotRepository().searchPublished({ cityKey: "valencia", categoryId: category, from, to, maxPriceCents: typeof query.maxPrice === "string" ? Number(query.maxPrice) : undefined, latitude: typeof query.lat === "string" ? Number(query.lat) : undefined, longitude: typeof query.lng === "string" ? Number(query.lng) : undefined, radiusKm: typeof query.radius === "string" ? Number(query.radius) : undefined, limit: 20 });
   return (
     <div className="page-shell shell">
-      <header className="page-intro"><p className="kicker">VALENCIA · LIVE</p><h1>{messages.explore.title}</h1><p>{messages.explore.subtitle}</p></header>
+      <header className="page-intro"><p className="kicker">{messages.explore.kicker}</p><h1>{messages.explore.title}</h1><p>{messages.explore.subtitle}</p></header>
       <ExploreFilters locale={locale} messages={messages} />
       {result.items.length ? <div className="slot-grid explore-grid">{result.items.map((slot, index) => <SlotCard key={slot.id} slot={slot} locale={locale} messages={messages} tone={index % 3 === 1 ? "mint" : index % 3 === 2 ? "lilac" : "coral"} />)}</div> : <div className="market-empty"><h2>{messages.explore.emptyTitle}</h2><p>{messages.explore.emptyBody}</p></div>}
     </div>
