@@ -17,3 +17,14 @@ test("English route renders localized discovery", async ({ page }) => {
   await page.goto("/en/explore");
   await expect(page.getByRole("heading", { name: /Available appointments/i })).toBeVisible();
 });
+
+test("location CTA searches nearby appointments in one step", async ({ context, page }) => {
+  await context.grantPermissions(["geolocation"], { origin: "http://127.0.0.1:3000" });
+  await context.setGeolocation({ latitude: 39.4699, longitude: -0.3763 });
+  await page.goto("/es");
+
+  await page.getByRole("button", { name: "Usar mi ubicación" }).click();
+
+  await expect(page).toHaveURL(/\/es\/explore\?lat=39\.4699&lng=-0\.3763&radius=5/);
+  await expect(page.getByRole("heading", { name: "Citas disponibles" })).toBeVisible();
+});

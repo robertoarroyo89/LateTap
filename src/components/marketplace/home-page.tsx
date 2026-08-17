@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, HeartPulse, LocateFixed, Scissors, Sparkles, Star } from "lucide-react";
+import { ArrowRight, HeartPulse, Scissors, Sparkles, Star } from "lucide-react";
 
 import type { Locale } from "@/config/app";
 import { categories } from "@/config/categories";
 import type { Messages } from "@/messages";
 import { getSlotRepository } from "@/server/repositories";
+import { HeroLocationButton } from "@/components/marketplace/hero-location-button";
 import { SlotCard } from "@/components/marketplace/slot-card";
 
 const categoryIcons = { hair: Scissors, barber: Scissors, nails: Sparkles, massage: HeartPulse, beauty: Sparkles, "brows-lashes": Star, physio: HeartPulse, wellness: Sparkles };
@@ -19,7 +20,7 @@ export async function HomePage({ locale, messages }: { locale: Locale; messages:
             <div className="eyebrow"><span className="live-dot" />{messages.home.live}</div>
             <h1>{messages.home.titleStart}<br /><em>{messages.home.titleEnd}</em></h1>
             <p>{messages.home.subtitle}</p>
-            <div className="hero-actions"><Link className="primary-button" href={`/${locale}/explore`}>{messages.home.seeToday}<ArrowRight size={18} /></Link><Link className="secondary-button" href={`/${locale}/explore?location=current`}><LocateFixed size={18} />{messages.home.useLocation}</Link></div>
+            <div className="hero-actions"><Link className="primary-button" href={`/${locale}/explore`}>{messages.home.seeToday}<ArrowRight size={18} /></Link><HeroLocationButton locale={locale} label={messages.home.useLocation} /></div>
             <small>{messages.home.venuePayment}</small>
           </div>
           <div className="hero-poster"><span>{messages.home.posterOpenTop}<br />{messages.home.posterOpenBottom}</span><strong>{messages.home.posterActionTop}<br />{messages.home.posterActionBottom}</strong><i>LateTap</i></div>

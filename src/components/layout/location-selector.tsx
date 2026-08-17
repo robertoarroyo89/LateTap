@@ -25,8 +25,8 @@ export function LocationSelector({ locale, label }: { locale: Locale; label: str
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         const query = new URLSearchParams({
-          lat: coords.latitude.toFixed(6),
-          lng: coords.longitude.toFixed(6),
+          lat: coords.latitude.toFixed(4),
+          lng: coords.longitude.toFixed(4),
           radius: "5",
         });
         setStatus("idle");
