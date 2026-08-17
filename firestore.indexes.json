@@ -6,14 +6,14 @@
       { "fieldPath": "startAt", "order": "ASCENDING" }
     ]},
     { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
-      { "fieldPath": "status", "order": "ASCENDING" },
-      { "fieldPath": "cityKey", "order": "ASCENDING" },
       { "fieldPath": "categoryId", "order": "ASCENDING" },
+      { "fieldPath": "cityKey", "order": "ASCENDING" },
+      { "fieldPath": "status", "order": "ASCENDING" },
       { "fieldPath": "startAt", "order": "ASCENDING" }
     ]},
     { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
-      { "fieldPath": "status", "order": "ASCENDING" },
       { "fieldPath": "cityKey", "order": "ASCENDING" },
+      { "fieldPath": "status", "order": "ASCENDING" },
       { "fieldPath": "geohash", "order": "ASCENDING" }
     ]},
     { "collectionGroup": "slots", "queryScope": "COLLECTION", "fields": [
