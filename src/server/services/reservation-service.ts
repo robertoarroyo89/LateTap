@@ -20,7 +20,9 @@ export async function listReservationsBy(ownerField: ReservationOwnerField, owne
       .orderBy("startAt", "desc")
       .limit(100)
       .get();
-    return snapshot.docs.map((item) => serializeReservation(item.id, item.data()));
+    return snapshot.docs
+      .filter((item) => ownerField !== "customerUid" || !item.data().hiddenFromCustomerAt)
+      .map((item) => serializeReservation(item.id, item.data()));
   } catch (error) {
     if (!isMissingIndexError(error)) throw error;
 
@@ -29,10 +31,16 @@ export async function listReservationsBy(ownerField: ReservationOwnerField, owne
     });
     const snapshot = await collection.where(ownerField, "==", ownerId).get();
     return snapshot.docs
+      .filter((item) => ownerField !== "customerUid" || !item.data().hiddenFromCustomerAt)
       .map((item) => serializeReservation(item.id, item.data()))
       .sort((left, right) => new Date(right.startAt).getTime() - new Date(left.startAt).getTime())
       .slice(0, 100);
   }
+}
+
+export function canCustomerHideReservation(data: { status?: unknown; startAt?: unknown }, now = Date.now()): boolean {
+  const startAt = data.startAt instanceof Timestamp ? data.startAt.toMillis() : new Date(data.startAt as string).getTime();
+  return data.status !== "confirmed" || Number.isFinite(startAt) && startAt < now;
 }
 
 export class ReservationService {
@@ -120,6 +128,19 @@ export class ReservationService {
     });
   }
 
+  async hideFromCustomer(reservationId: string, customerUid: string) {
+    const ref = adminDb().collection("reservations").doc(reservationId);
+    const snapshot = await ref.get();
+    if (!snapshot.exists) throw new AppError("NOT_FOUND", "Reservation not found", 404);
+    const reservation = snapshot.data()!;
+    if (reservation.customerUid !== customerUid) throw new AppError("FORBIDDEN", "Not your reservation", 403);
+    if (!canCustomerHideReservation(reservation)) {
+      throw new AppError("INVALID_INPUT", "Active reservations must be cancelled before removing them", 409);
+    }
+    await ref.update({ hiddenFromCustomerAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    return { id: reservationId };
+  }
+
   async updateByBusiness(reservationId: string, ownerUid: string, action: "complete" | "no_show" | "cancel", reason?: string) {
     const db = adminDb();
     const reservationRef = db.collection("reservations").doc(reservationId);
@@ -161,5 +182,6 @@ export function serializeReservation(id: string, data: FirebaseFirestore.Documen
     cancelledAt: data.cancelledAt ? iso(data.cancelledAt) : undefined,
     completedAt: data.completedAt ? iso(data.completedAt) : undefined,
     noShowAt: data.noShowAt ? iso(data.noShowAt) : undefined,
+    hiddenFromCustomerAt: data.hiddenFromCustomerAt ? iso(data.hiddenFromCustomerAt) : undefined,
   } as Reservation;
 }

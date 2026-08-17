@@ -1,4 +1,4 @@
-import { Timestamp, type DocumentData, type QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { Timestamp, type DocumentData, type DocumentSnapshot } from "firebase-admin/firestore";
 import { distanceBetween, geohashQueryBounds } from "geofire-common";
 
 import { adminDb } from "@/lib/firebase/admin";
@@ -19,8 +19,8 @@ function iso(value: unknown): string {
   return new Date(0).toISOString();
 }
 
-export function mapSlot(snapshot: QueryDocumentSnapshot<DocumentData>): Slot {
-  const data = snapshot.data();
+export function mapSlot(snapshot: DocumentSnapshot<DocumentData>): Slot {
+  const data = snapshot.data()!;
   return {
     ...data,
     id: snapshot.id,
@@ -109,6 +109,6 @@ export class FirebaseSlotRepository implements SlotRepository {
   async getPublicById(id: string) {
     const snapshot = await adminDb().collection("slots").doc(id).get();
     if (!snapshot.exists) return null;
-    return mapSlot(snapshot as QueryDocumentSnapshot<DocumentData>);
+    return mapSlot(snapshot);
   }
 }

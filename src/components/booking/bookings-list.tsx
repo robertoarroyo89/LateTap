@@ -16,6 +16,8 @@ async function fetchReservations(business: boolean) {
 export function BookingsList({ locale, business = false }: { locale: Locale; business?: boolean }) {
   const [items, setItems] = useState<Reservation[]>([]);
   const [error, setError] = useState(false);
+  const [pendingId, setPendingId] = useState<string>();
+  const [now] = useState(() => Date.now());
 
   useEffect(() => {
     let active = true;
@@ -34,20 +36,58 @@ export function BookingsList({ locale, business = false }: { locale: Locale; bus
   }, [business]);
 
   const action = async (item: Reservation, type: string) => {
+    setPendingId(item.id);
     const url = business
       ? `/api/v1/business/reservations/${item.id}`
       : `/api/v1/reservations/${item.id}/cancel`;
-    await fetch(url, {
+    const response = await fetch(url, {
       method: business ? "PATCH" : "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(business ? { action: type } : {}),
     });
+    setPendingId(undefined);
+    if (!response.ok) {
+      setError(true);
+      return;
+    }
     try {
       setItems(await fetchReservations(business));
       setError(false);
     } catch {
       setError(true);
     }
+  };
+
+  const remove = async (item: Reservation) => {
+    const confirmed = window.confirm(locale === "es"
+      ? "¿Eliminar esta reserva de tu historial? Esta acción no afecta al registro del negocio."
+      : "Remove this booking from your history? This does not affect the business record.");
+    if (!confirmed) return;
+    setPendingId(item.id);
+    const response = await fetch(`/api/v1/me/reservations/${item.id}`, { method: "DELETE" });
+    setPendingId(undefined);
+    if (!response.ok) {
+      setError(true);
+      return;
+    }
+    setItems((current) => current.filter((candidate) => candidate.id !== item.id));
+  };
+
+  const statusLabel = (status: Reservation["status"]) => {
+    const labels = locale === "es" ? {
+      confirmed: "Confirmada",
+      cancelled_by_customer: "Cancelada",
+      cancelled_by_business: "Cancelada por el negocio",
+      completed: "Completada",
+      no_show: "No asistió",
+    } : {
+      confirmed: "Confirmed",
+      cancelled_by_customer: "Cancelled",
+      cancelled_by_business: "Cancelled by business",
+      completed: "Completed",
+      no_show: "No-show",
+    };
+    return labels[status];
   };
 
   return (
@@ -59,8 +99,10 @@ export function BookingsList({ locale, business = false }: { locale: Locale; bus
             : "Your bookings could not be loaded. Please try again."}
         </div>
       )}
-      {items.map((item) => (
-        <article key={item.id}>
+      {items.map((item) => {
+        const isPast = new Date(item.startAt).getTime() < now;
+        const canRemove = !business && (item.status !== "confirmed" || isPast);
+        return <article key={item.id}>
           <div className="booking-date">
             <span>{new Date(item.startAt).getDate()}</span>
             <small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(new Date(item.startAt))}</small>
@@ -70,18 +112,19 @@ export function BookingsList({ locale, business = false }: { locale: Locale; bus
             <span>{item.businessSnapshot.name} · {formatSlotDate(item.startAt, locale, item.timezone)}</span>
           </div>
           <b>{formatPrice(item.priceCents, item.currency, locale)}</b>
-          <span className={`status-badge ${item.status}`}>{item.status.replaceAll("_", " ")}</span>
+          <span className={`status-badge ${item.status}`}>{statusLabel(item.status)}</span>
           {item.status === "confirmed" && (business ? (
             <div className="row-actions">
-              <button onClick={() => action(item, "complete")}>Complete</button>
-              <button onClick={() => action(item, "no_show")}>No-show</button>
-              <button onClick={() => action(item, "cancel")}>Cancel</button>
+              <button disabled={pendingId === item.id} onClick={() => action(item, "complete")}>Complete</button>
+              <button disabled={pendingId === item.id} onClick={() => action(item, "no_show")}>No-show</button>
+              <button disabled={pendingId === item.id} onClick={() => action(item, "cancel")}>Cancel</button>
             </div>
-          ) : (
-            <button onClick={() => action(item, "cancel")}>{locale === "es" ? "Cancelar" : "Cancel"}</button>
-          ))}
-        </article>
-      ))}
+          ) : !isPast ? (
+            <button disabled={pendingId === item.id} onClick={() => action(item, "cancel")}>{locale === "es" ? "Cancelar" : "Cancel"}</button>
+          ) : null)}
+          {canRemove && <button className="booking-remove" disabled={pendingId === item.id} onClick={() => remove(item)}>{locale === "es" ? "Eliminar" : "Remove"}</button>}
+        </article>;
+      })}
       {!error && !items.length && (
         <div className="dashboard-notice">{locale === "es" ? "Todavía no hay reservas." : "No bookings yet."}</div>
       )}

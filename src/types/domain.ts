@@ -154,7 +154,10 @@ export interface Reservation {
   cancellationReason?: string;
   completedAt?: ISODateString;
   noShowAt?: ISODateString;
+  hiddenFromCustomerAt?: ISODateString;
 }
+
+export type AlertDurationHours = 24 | 48 | 72;
 
 export interface AlertPreference {
   id: string;
@@ -166,10 +169,31 @@ export interface AlertPreference {
   geohash?: string;
   radiusKm?: number;
   maxPriceCents?: number;
-  datePreference?: "today" | "tomorrow" | "both";
+  datePreference?: "today" | "tomorrow" | "both" | "week";
+  cityKey: string;
+  durationHours: AlertDurationHours;
+  expiresAt: ISODateString;
+  lastMatchedAt?: ISODateString;
+  matchCount?: number;
   locale: Locale;
   createdAt: ISODateString;
   updatedAt: ISODateString;
+}
+
+export interface AvailabilityNotification {
+  id: string;
+  uid: string;
+  type: "slot_available";
+  alertId: string;
+  slotId: string;
+  categoryId: CategoryId;
+  businessName: string;
+  serviceName: string;
+  startAt: ISODateString;
+  locale: Locale;
+  emailDelivered: boolean;
+  readAt?: ISODateString;
+  createdAt: ISODateString;
 }
 
 export interface PaginatedResult<T> { items: T[]; nextCursor?: string }

@@ -18,8 +18,16 @@ export class SlotService {
     if (!business.exists || business.data()?.ownerUid !== ownerUid) throw new AppError("FORBIDDEN", "Business ownership required", 403);
     if (business.data()?.status !== "approved") throw new AppError("BUSINESS_NOT_APPROVED", "Business must be approved before publishing", 409);
     if (featureFlags.requireDiscount && input.priceCents >= input.regularPriceCents) throw new AppError("INVALID_PRICE", "A discount is required", 422);
-    const start = new Date(input.startAt); const end = new Date(start.getTime() + input.durationMinutes * 60_000); const ref = db.collection("slots").doc(); const data = business.data()!; const serviceData = service.data()!;
-    await ref.create({ id: ref.id, businessId: business.id, serviceId: service.id, categoryId: serviceData.categoryId, status: "published", startAt: Timestamp.fromDate(start), endAt: Timestamp.fromDate(end), timezone: data.timezone, durationMinutes: input.durationMinutes, regularPriceCents: input.regularPriceCents, priceCents: input.priceCents, currency: data.currency, discountPercent: calculateDiscount(input.regularPriceCents, input.priceCents), note: input.note ?? "", location: new GeoPoint(data.location.latitude, data.location.longitude), geohash: data.geohash, cityKey: "valencia", businessSnapshot: { name: data.name, slug: data.slug, logoUrl: data.logoUrl ?? "", neighborhood: data.address.neighborhood ?? data.address.city, city: data.address.city }, serviceSnapshot: { nameEs: serviceData.nameEs, nameEn: serviceData.nameEn ?? "", categoryId: serviceData.categoryId }, publishedAt: FieldValue.serverTimestamp(), createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    const start = new Date(input.startAt);
+    const end = new Date(start.getTime() + input.durationMinutes * 60_000);
+    const ref = db.collection("slots").doc();
+    const data = business.data()!;
+    const serviceData = service.data()!;
+    const location = { latitude: data.location.latitude, longitude: data.location.longitude };
+    const businessSnapshot = { name: data.name, slug: data.slug, logoUrl: data.logoUrl ?? "", neighborhood: data.address.neighborhood ?? data.address.city, city: data.address.city };
+    const serviceSnapshot = { nameEs: serviceData.nameEs, nameEn: serviceData.nameEn ?? "", categoryId: serviceData.categoryId };
+    const discountPercent = calculateDiscount(input.regularPriceCents, input.priceCents);
+    await ref.create({ id: ref.id, businessId: business.id, serviceId: service.id, categoryId: serviceData.categoryId, status: "published", startAt: Timestamp.fromDate(start), endAt: Timestamp.fromDate(end), timezone: data.timezone, durationMinutes: input.durationMinutes, regularPriceCents: input.regularPriceCents, priceCents: input.priceCents, currency: data.currency, discountPercent, note: input.note ?? "", location: new GeoPoint(location.latitude, location.longitude), geohash: data.geohash, cityKey: "valencia", businessSnapshot, serviceSnapshot, publishedAt: FieldValue.serverTimestamp(), createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     return { id: ref.id };
   }
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, Search, Sparkles } from "lucide-react";
+import { Bell, CalendarDays, Search, Sparkles } from "lucide-react";
 
 import { LocationSelector } from "@/components/layout/location-selector";
 import type { Locale } from "@/config/app";
@@ -18,6 +18,7 @@ export async function SiteHeader({ locale, messages }: { locale: Locale; message
           <nav className="desktop-nav" aria-label="Primary navigation">
             <Link href={`/${locale}/explore`}>{messages.nav.explore}</Link>
             <Link href={`/${locale}/for-businesses`}>{messages.nav.forBusinesses}</Link>
+            {user && <Link className="notification-link" href={`/${locale}/account/alerts`} aria-label={locale === "es" ? "Avisos" : "Alerts"}><Bell size={18} /></Link>}
             <Link className="language-button" href={`/${alternate}`} aria-label={messages.common.language}>{alternate.toUpperCase()}</Link>
             <Link className="login-button" href={user ? `/${locale}/account/bookings` : `/${locale}/login`}>
               {user ? messages.nav.bookings : messages.nav.login}
@@ -29,6 +30,7 @@ export async function SiteHeader({ locale, messages }: { locale: Locale; message
         <Link href={`/${locale}`}><Sparkles size={20} />{messages.nav.home}</Link>
         <Link href={`/${locale}/explore`}><Search size={20} />{messages.nav.explore}</Link>
         <Link href={`/${locale}/account/bookings`}><CalendarDays size={20} />{messages.nav.bookings}</Link>
+        <Link href={`/${locale}/account/alerts`}><Bell size={20} />{locale === "es" ? "Avisos" : "Alerts"}</Link>
         <Link href={`/${locale}/account/profile`}><span className="profile-dot" />{messages.nav.profile}</Link>
       </nav>
     </>

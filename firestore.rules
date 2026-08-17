@@ -54,6 +54,11 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
     match /categories/{categoryId} {
       allow read: if resource.data.enabled == true;
       allow create, update, delete: if false;
