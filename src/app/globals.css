@@ -36,6 +36,20 @@ a { color: inherit; text-decoration: none; }
 .location-button, .language-button { border: 0; background: transparent; color: var(--ink); cursor: pointer; }
 .location-button { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; }
 .location-button svg:first-child { color: var(--coral-dark); }
+.location-button svg:last-child { transition: transform 150ms ease; }
+.location-button[data-state="open"] svg:last-child { transform: rotate(180deg); }
+.location-menu { z-index: 80; min-width: 265px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 18px 50px rgba(28,22,20,.15); animation: location-menu-in 140ms ease-out; }
+.location-menu-label { padding: 8px 10px 9px; color: var(--muted); font-size: 11px; font-weight: 760; letter-spacing: .05em; text-transform: uppercase; }
+.location-menu-item { display: flex; align-items: center; gap: 11px; padding: 10px; border-radius: 9px; outline: none; cursor: pointer; }
+.location-menu-item[data-highlighted] { background: var(--warm); }
+.location-menu-item[data-disabled] { opacity: .55; cursor: wait; }
+.location-menu-item > svg { flex: none; color: var(--coral-dark); }
+.location-menu-item span { display: grid; gap: 2px; }
+.location-menu-item strong { font-size: 13px; }
+.location-menu-item small { color: var(--muted); font-size: 11px; }
+.location-menu-error { max-width: 245px; margin: 7px 4px 3px; padding: 9px; border-radius: 8px; background: #fff0ee; color: #9d2e36; font-size: 11px; line-height: 1.4; }
+.location-menu-arrow { fill: var(--surface); }
+@keyframes location-menu-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } }
 .desktop-nav { margin-left: auto; display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 610; }
 .desktop-nav > a:not(.login-button):hover { color: var(--coral-dark); }
 .language-button { padding: 8px; font-size: 13px; font-weight: 750; }
