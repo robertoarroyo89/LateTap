@@ -23,6 +23,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "seed": "tsx scripts/seed.ts",
+    "seed:showcase": "tsx scripts/seed-showcase.ts",
     "admin:set": "tsx scripts/set-admin.ts",
     "emulators": "firebase emulators:start --import=.firebase-data --export-on-exit=.firebase-data",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build"
