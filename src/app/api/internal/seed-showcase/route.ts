@@ -2,7 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 
 import { seedShowcaseData } from "@/server/showcase-seed";
 
-const expectedTokenHash = "ca0e75a8daaa0db52eb989ef538554fc3512781edd1faa5bdca25b14fc76a9e5";
+const expectedTokenHash = "3905abdafead102ce6f6db41289b9e0ff8503bf32a872f61941576012f982ca5";
 
 export async function POST(request: Request) {
   if (process.env.VERCEL_ENV !== "production") return Response.json({ error: "Not available" }, { status: 404 });
